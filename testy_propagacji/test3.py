@@ -1,3 +1,4 @@
+#próba propagacji z biblioteką aotools
 import numpy
 from aotools import opticalpropagation
 import matplotlib.pyplot as plt

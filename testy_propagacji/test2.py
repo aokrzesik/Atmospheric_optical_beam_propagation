@@ -1,3 +1,4 @@
+#propagacja z biblioteki hcipy na podstawie przykładów
 import numpy as np
 import matplotlib.pyplot as plt
 
