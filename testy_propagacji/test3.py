@@ -29,17 +29,17 @@ for i in range(size):
 		gauss2[i][j] = gaussian(gauss[i][j])
 
 
-
+wavefront = numpy.exp(j*gauss2)
 #gauss2 = gaussian(gauss)
 
-plt.imshow(gauss2)
+plt.imshow(wavefront)
 plt.colorbar()
 plt.show()
 
 
 
 
-ttt = opticalpropagation.angularSpectrum(gauss2, wavelength, pxl_scale, pxl_scale, propagation_distance)
+ttt = opticalpropagation.angularSpectrum(wavefront, wavelength, pxl_scale, pxl_scale, propagation_distance)
 
 after = numpy.abs(ttt)**2
 
