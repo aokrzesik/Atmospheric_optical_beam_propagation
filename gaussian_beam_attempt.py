@@ -4,13 +4,13 @@ from matplotlib import pyplot as plt
 """ initialization """
 
 # parameters
-N = 100 # grid resolution (number of points)
-L = 0.1 # simulation window width
-lambd = L / 20
-dx = L / N
+N = 512 # grid resolution (number of points)
+L = 0.01 # simulation window width
+lambd = 500e-9 # wavelength
+dx = L / N # grid spacing
 beam_waist = L / 5 # beam radius at its narrowest point
-k = 2 * np.pi / lambd
-z = .3 # distance at which E_out is computed
+k = 2 * np.pi / lambd # wave number
+z = 30 # distance at which E_out is computed
 
 # grid definition
 x = np.linspace(-L/2, L/2, N)
@@ -19,13 +19,6 @@ X, Y = np.meshgrid(x, y)
 
 # Gaussian beam
 E_in = np.exp(-(X**2 + Y**2) / beam_waist**2)
-# plot of E_in
-plt.imshow(np.abs(E_in)**2, extent=[x.min(), x.max(), y.min(), y.max()])
-plt.title("E_in at z=0")
-plt.xlabel("x")
-plt.ylabel("y")
-plt.colorbar()
-plt.show()
 
 """ beam propagation with FFT """
 
@@ -34,8 +27,8 @@ k_x = 2 * np.pi * np.fft.fftfreq(N, d=dx)
 k_y = 2 * np.pi * np.fft.fftfreq(N, d=dx)
 K_X, K_Y = np.meshgrid(k_x, k_y)
 
-# k_z (from a formula)
-k_z = np.sqrt(k**2 - K_X**2 - K_Y**2 + 0j)  # 0j to make the format imaginary
+# k_z (angular spectrum propagator - taylor approximation)
+k_z = k - (K_X**2 + K_Y**2) / (2*k) + 0j # 0j to make the format imaginary
 
 # transformation of E_in into E_k (E in Fourier space) with FFT
 E_k = np.fft.fft2(E_in)
@@ -47,23 +40,27 @@ E_k_prop = E_k * propagator
 # transformation of E_in into E_out with FFT
 E_out = np.fft.ifft2(E_k_prop)
 
-# plot of E_out
-plt.imshow(np.abs(E_out)**2, extent=[x.min(), x.max(), y.min(), y.max()])
-plt.title(f"E_out at z={z}")
-plt.xlabel("x")
-plt.ylabel("y")
-plt.colorbar()
-plt.show()
+""" plot """
 
-# cross-section plot
-plt.plot(np.abs(E_out[N//2, :])**2)
-plt.title(f"E_out cross-section at y={N//2}, z={z}")
-plt.xlabel("x")
+figure, axis = plt.subplots(1, 2, figsize=(14, 5))
+# E_in at z=0
+axis_0 = axis[0].imshow(np.abs(E_in)**2, extent=[x.min(), x.max(), y.min(), y.max()])
+axis[0].set_title("E_in at z=0")
+axis[0].set(xlabel="x")
+axis[0].set(ylabel="y")
+figure.colorbar(axis_0, ax=axis[0])
+# E_out
+axis_1 = axis[1].imshow(np.abs(E_out)**2, extent=[x.min(), x.max(), y.min(), y.max()])
+axis[1].set_title(f"E_out at z={z}")
+axis[1].set(xlabel="x")
+axis[1].set(ylabel="y")
+figure.colorbar(axis_1, ax=axis[1])
 plt.show()
 
 print(E_out)
 
 """ comparision with analytical Gaussian beam """
+# I(r, z) from https://en.wikipedia.org/wiki/Gaussian_beam
 
 # parameters
 I_0 = 1.
