@@ -5,12 +5,12 @@ from matplotlib import pyplot as plt
 
 # parameters
 N = 512 # grid resolution (number of points)
-L = 0.01 # simulation window width
+L = 15 # simulation window width
 lambd = 500e-9 # wavelength
 dx = L / N # grid spacing
 beam_waist = L / 5 # beam radius at its narrowest point
 k = 2 * np.pi / lambd # wave number
-z = 30 # distance at which E_out is computed
+z = 24622000 # distance at which E_out is computed
 
 # grid definition
 x = np.linspace(-L/2, L/2, N)
